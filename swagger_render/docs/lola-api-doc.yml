@@ -1,0 +1,1826 @@
+swagger: "2.0"
+
+info:
+  version: '1.0'
+  title: Lola-API
+  description: Lola Backend API
+  contact: {}
+
+host: lola-api.baseafriquedev.com
+basePath: /
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+
+paths:
+    /users/provision/:
+      post:
+        summary: User Registration (Sign Up)
+        tags:
+        - Users
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+        - name: Content-Type             
+          in: header
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            type: string
+            example: application/json
+        - name: secret
+          in: header
+          required: true
+          description: The secret key of the tenant that user belongs to
+          schema:
+            type: string
+            example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38gebr83eu389r93-ajey83e5rfsvdh2ei7-dye
+        - name: Body
+          in: body
+          required: true
+          description: Sign Up
+          schema:
+            $ref: '#/components/requestBody/UserPOSTBody'
+
+
+        responses:
+          '201':
+            description: User Created
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                          required: false
+                        middleName:
+                          type: string
+                        userName:
+                          type: string
+                        email:
+                          type: string
+                        phoneNumber:
+                          type: integer
+                        irNo:
+                          type: string
+                        birthday:
+                          type: string
+                          format: date-time
+                        stateOfOrigin:
+                          type: string
+                        residentAddress:
+                          type: string
+                        permanentAddress:
+                          type: string
+                        deploymentAddress:
+                          type: string
+                        officeAddress:
+                          type: string                        
+                        maritalStatus:
+                          type: string
+                        employmentDate:
+                          type: string
+                          format: date-time
+                        representative:
+                          type: object
+                          properties:
+                            firstName:
+                              type: string
+                            lastName:
+                              type: string
+                            relationship:
+                              type: string
+                            address:
+                              type: string
+                            phoneNumber:
+                              type: string
+                        bank:
+                          type: object
+                          properties:
+                            bankName:
+                              type: string
+                            accountName:
+                              type: string
+                            accountNumber:
+                              type: string
+                        salaryGrade:
+                          type: string
+                        image:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        userCategoryType:
+                          type: string
+                message:
+                  type: string
+                  example: successfully created
+
+          '400':
+            description: Bad Request
+            schema:
+              $ref: '#/components/responses/400_Bad_Request'
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+          
+          '409':
+            description: Conflict
+            schema:
+              $ref: '#/components/responses/409_Conflict'
+          
+          '500':
+            description: Internal Server Error
+            schema:
+              $ref: '#/components/responses/500_Internal_Server_Error' 
+    
+    
+    /login/:
+      post:
+        summary: Authenticate (LogIn) User
+        tags:
+          - Authentication
+        produces:
+        - application/json
+        parameters:
+        - name: Content-Type             
+          in: header
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            type: string
+            example: application/json
+        - name: secret
+          in: header
+          required: true
+          description: The secret key of the tenant that user belongs to
+          schema:
+            type: string
+            example: 32b3cc66ec1e468d3263e5fc881b8ff4a1dc03228111dc20ee76e48b79405fde88bd081920cb476ac4283fa37a4a5ebdf28339b0858ccf9e056fcd25d23cfcb34ac3c7109cfe067b3e2d1572b4251e23a806919d4196a7c50eb3727c1ebd94245adca342a03545b2a15247eccfc41bffd5ed14d9d18a8cb419066307e2f8c9db
+        - name: Body
+          in: body
+          required: true
+          description: Login
+          schema:
+            $ref: '#/components/requestBody/AuthenticatePOSTBody'
+
+        responses:
+          '200':
+            description: OK
+            schema:
+              $ref: '#/components/responses/Authenticate'
+
+          '400':
+            description: Bad Request
+            schema:
+              $ref: '#/components/responses/400_Bad_Request'
+
+
+    /users/validatepin/:
+      post:
+        summary: Token Validation
+        tags:
+        - Authentication
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+        - name: Content-Type             
+          in: header
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            type: string
+            example: application/json
+        - name: Body
+        in: body
+        required: true
+        description: Validate Pin
+        schema:
+          type: object
+          properties:
+            key:
+              type: string
+            pin:
+              type: string
+
+        responses:
+          '200':
+            description: OK
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                    message:
+                      type: string
+                      example: Token is valid
+
+          '400':
+            description: Bad Request
+            schema:
+              $ref: '#/components/responses/400_Bad_Request'
+
+
+    /users/:
+      get:
+        summary: GET all users
+        tags:
+        - Users
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+        - name: Content-Type             
+          in: header
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            type: string
+            example: application/json
+        - name: accessToken
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+
+        responses:
+          '200':
+            summary: List of all users
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        middleName:
+                          type: string
+                        userName:
+                          type: string
+                        email:
+                          type: string
+                        phone:
+                          type: integer
+                        irNo:
+                          type: string
+                        birthday:
+                          type: string
+                          format: date-time
+                        stateOfOrigin:
+                          type: string
+                        residentAddress:
+                          type: string
+                        permanentAddress:
+                          type: string
+                        deploymentAddress:
+                          type: string
+                        officeAddress:
+                          type: string                        
+                        maritalStatus:
+                          type: string
+                        employmentDate:
+                          type: string
+                          format: date-time
+                        salaryGrade:
+                          type: string
+                        image:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        userCategoryType:
+                          type: string
+                      pagination:
+                        $ref: '#components/pagination'
+
+                  message:
+                    type: string
+                    example: list of all users
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+
+      post:
+        summary: Create a single user
+        tags:
+        - Users
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+          - name: Content-Type             
+            in: header
+            required: true
+            schema:
+              type: string
+              example: application/json
+          - name: Accept
+            in: header
+            required: false
+            schema:
+              type: string
+              example: application/json
+          - name: accessToken
+            in: header
+            required: true
+            schema:
+              type: string
+              example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+          - name: Body
+            in: body
+            required: true
+            description: Update a User
+            schema:
+              $ref: '#/components/requestBody/UserPOSTBody'
+          
+        responses:
+          '201':
+            description: OK
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        middleName:
+                          type: string
+                        userName:
+                          type: string
+                        email:
+                          type: string
+                        phone:
+                          type: integer
+                        irNo:
+                          type: string
+                        birthday:
+                          type: string
+                          format: date-time
+                        stateOfOrigin:
+                          type: string
+                        residentAddress:
+                          type: string
+                        permanentAddress:
+                          type: string
+                        deploymentAddress:
+                          type: string
+                        officeAddress:
+                          type: string                        
+                        maritalStatus:
+                          type: string
+                        employmentDate:
+                          type: string
+                          format: date-time
+                        salaryGrade:
+                          type: string
+                        image:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        userCategoryType:
+                          type: string
+                    message:
+                      type: string
+                      example: successfully created a user
+
+          '400':
+            description: Bad Request
+            schema:
+              $ref: '#/components/responses/400_Bad_Request'
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+
+          '404':
+            description: Not Found
+            schema:
+              $ref: '#/components/responses/404_Not_Found'
+
+          '409':
+            description: Conflict
+            schema:
+              $ref: '#/components/responses/409_Conflict'
+
+          '500':
+            description: Internal Server Error
+            schema:
+              $ref: '#/components/responses/500_Internal_Server_Error' 
+
+
+    /users/{userId}/:
+      get:
+        summary: GET a single user using it's id
+        tags:
+        - Users
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+          - in: path
+            name: userId
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The user ID
+          - name: Content-Type             
+            in: header
+            required: true
+            schema:
+              type: string
+              example: application/json
+          - name: Accept
+            in: header
+            required: false
+            schema:
+              type: string
+              example: application/json
+          - name: accessToken
+            in: header
+            required: true
+            schema:
+              type: string
+              example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+
+        responses:
+          '200':
+            description: OK
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        middleName:
+                          type: string
+                        userName:
+                          type: string
+                        email:
+                          type: string
+                        phone:
+                          type: integer
+                        irNo:
+                          type: string
+                        birthday:
+                          type: string
+                          format: date-time
+                        stateOfOrigin:
+                          type: string
+                        residentAddress:
+                          type: string
+                        permanentAddress:
+                          type: string
+                        deploymentAddress:
+                          type: string
+                        officeAddress:
+                          type: string                        
+                        maritalStatus:
+                          type: string
+                        employmentDate:
+                          type: string
+                          format: date-time
+                        salaryGrade:
+                          type: string
+                        image:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        userCategoryType:
+                          type: string
+
+                  message:
+                    type: string
+                    example: successfully retrieved user
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+  
+          '404':
+            description: Not Found
+            schema:
+              $ref: '#/components/responses/404_Not_Found'
+    
+      post:
+        summary: Update a single user
+        tags:
+        - Users
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+          - in: path
+            name: userId
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The user ID
+          - name: Content-Type             
+            in: header
+            required: true
+            schema:
+              type: string
+              example: application/json
+          - name: Accept
+            in: header
+            required: false
+            schema:
+              type: string
+              example: application/json
+          - name: accessToken
+            in: header
+            required: true
+            schema:
+              type: string
+              example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+          - name: Body
+            in: body
+            required: true
+            description: Update a User
+            schema:
+              $ref: '#/components/requestBody/UserPOSTBody'
+          
+        responses:
+          '200':
+            description: OK
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        middleName:
+                          type: string
+                        userName:
+                          type: string
+                        email:
+                          type: string
+                        phone:
+                          type: integer
+                        irNo:
+                          type: string
+                        birthday:
+                          type: string
+                          format: date-time
+                        stateOfOrigin:
+                          type: string
+                        residentAddress:
+                          type: string
+                        permanentAddress:
+                          type: string
+                        deploymentAddress:
+                          type: string
+                        officeAddress:
+                          type: string                        
+                        maritalStatus:
+                          type: string
+                        employmentDate:
+                          type: string
+                          format: date-time
+                        salaryGrade:
+                          type: string
+                        image:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        userCategoryType:
+                          type: string
+                    message:
+                      type: string
+                      example: successfully updated user
+
+          '400':
+            description: Bad Request
+            schema:
+              $ref: '#/components/responses/400_Bad_Request'
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+
+          '404':
+            description: Not Found
+            schema:
+              $ref: '#/components/responses/404_Not_Found'
+
+          '409':
+            description: Conflict
+            schema:
+              $ref: '#/components/responses/409_Conflict'
+
+          '500':
+            description: Internal Server Error
+            schema:
+              $ref: '#/components/responses/500_Internal_Server_Error' 
+
+
+    /users/{userId}/delete/:
+      post:
+        summary: Delete a single user
+        tags:
+        - Users
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+          - in: path
+            name: userId
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The user ID
+          - name: Content-Type             
+            in: header
+            required: true
+            schema:
+              type: string
+              example: application/json
+          - name: Accept
+            in: header
+            required: false
+            schema:
+              type: string
+              example: application/json
+          - name: accessToken
+            in: header
+            required: true
+            schema:
+              type: string
+              example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+
+        responses:
+          '200':
+            description: OK
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                    message:
+                      type: string
+                      example: successfully deleted user
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+
+          '404':
+            description: Not Found
+            schema:
+              $ref: '#/components/responses/404_Not_Found'
+
+          '500':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/500'
+
+
+    /users/{userId}/status/:
+      post:
+        summary: Change the status of a single user account
+        tags:
+        - Users
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+          - in: path
+            name: userId
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The user ID
+          - in: query
+            name: action
+            schema:
+              type: string
+              enum: [approve, disapprove, activate, deactivate]
+            required: true
+            description: One of the following -- [approve, disapprove, activate, deactivate]
+          - name: Content-Type             
+            in: header
+            required: true
+            schema:
+              type: string
+              example: application/json
+          - name: Accept
+            in: header
+            required: false
+            schema:
+              type: string
+              example: application/json
+          - name: accessToken
+            in: header
+            required: true
+            schema:
+              type: string
+              example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+
+        responses:
+          '200':
+            description: OK
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                    message:
+                      type: string
+                      example: successfully approved user
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+
+          '404':
+            description: Not Found
+            schema:
+              $ref: '#/components/responses/404_Not_Found'
+
+          '500':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/500_Internal_Server_Error'
+
+
+    /users/passwordreset/:
+      post:
+        summary: Password Reset
+        tags:
+        - Users
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+        - name: Content-Type             
+          in: header
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            type: string
+            example: application/json
+        - name: accessToken
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+        - name: Body
+          in: body
+          required: true
+          description: Reset User Password
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+              password:
+                type: string
+
+        responses:
+          '200':
+            description: OK
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                    message:
+                      type: string
+                      example: Password Reset was successful
+
+          '400':
+            description: Bad Request
+            schema:
+              $ref: '#/components/responses/400_Bad_Request'
+
+          '500':
+            description: Internal Server Error
+            schema:
+              $ref: '#/components/responses/500_Internal_Server_Error' 
+
+    
+    /users/passwordchange/:
+      post:
+        summary: Change Password
+        tags:
+        - Users
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+        - name: Content-Type             
+          in: header
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            type: string
+            example: application/json
+        - name: accessToken
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+        - name: Body
+          in: body
+          required: true
+          description: Change User Password
+          schema:
+            type: object
+            properties:
+              currentPassword:
+                type: string
+              newPassword:
+                type: string
+
+        responses:
+          '200':
+            description: OK
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                    message:
+                      type: string
+                      example: Password Change was successful
+
+          '400':
+            description: Bad Request
+            schema:
+              $ref: '#/components/responses/400_Bad_Request'
+
+          '500':
+            description: Internal Server Error
+            schema:
+              $ref: '#/components/responses/500_Internal_Server_Error' 
+
+
+    /members/request/:
+      get:
+        summary: GET all membership requests
+        tags:
+        - Members
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+        - name: Content-Type             
+          in: header
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            type: string
+            example: application/json
+        - name: accessToken
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+
+        responses:
+          '200':
+            summary: List of all membership requests
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        middleName:
+                          type: string
+                        userName:
+                          type: string
+                        email:
+                          type: string
+                        phone:
+                          type: integer
+                        irNo:
+                          type: string
+                        birthday:
+                          type: string
+                          format: date-time
+                        stateOfOrigin:
+                          type: string
+                        residentAddress:
+                          type: string
+                        permanentAddress:
+                          type: string
+                        deploymentAddress:
+                          type: string
+                        officeAddress:
+                          type: string                        
+                        maritalStatus:
+                          type: string
+                        employmentDate:
+                          type: string
+                          format: date-time
+                        salaryGrade:
+                          type: string
+                        image:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        userCategoryType:
+                          type: string
+                          
+                      pagination:
+                        $ref: '#components/pagination'
+
+                  message:
+                    type: string
+                    example: successfully retrieved membership requests
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+        
+    
+    /tenants/:
+      get:
+        summary: GET all tenants
+        tags:
+        - Tenants
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+        - name: Content-Type             
+          in: header
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            type: string
+            example: application/json
+        - name: accessToken
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+
+        responses:
+          '200':
+            summary: List of all tenants
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        isActive:
+                          type: string
+                        contactEmail:
+                          type: string
+                        contactPhone:
+                          type: string
+                        logo:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+                      pagination:
+                        $ref: '#components/pagination'
+
+                  message:
+                    type: string
+                    example: successfully retrieved tenants
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+      post:
+        summary: Create a single tenant
+        tags:
+        - Tenants
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+        - name: Content-Type             
+          in: header
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            type: string
+            example: application/json
+        - name: accessToken
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+        - name: Body
+          in: body
+          required: true
+          description: Create a Tenant
+          schema:
+            $ref: '#/components/requestBody/TenantPOSTBody'
+        
+        responses:
+          '200':
+            description: OK
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        isActive:
+                          type: string
+                        contactEmail:
+                          type: string
+                        contactPhone:
+                          type: string
+                        logo:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+                    message:
+                      type: string
+                      example: successfully created a tenant
+
+          '400':
+            description: Bad Request
+            schema:
+              $ref: '#/components/responses/400_Bad_Request'
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+
+          '404':
+            description: Not Found
+            schema:
+              $ref: '#/components/responses/404_Not_Found'
+
+          '409':
+            description: Conflict
+            schema:
+              $ref: '#/components/responses/409_Conflict'
+
+          '500':
+            description: Internal Server Error
+            schema:
+              $ref: '#/components/responses/500_Internal_Server_Error' 
+
+
+    /tenants/{tenantId}>/:
+      get:
+        summary: GET a single tenant using it's ID
+        tags:
+        - Tenants
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+          - in: path
+            name: tenantId
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The tenant ID
+          - name: Content-Type             
+            in: header
+            required: true
+            schema:
+              type: string
+              example: application/json
+          - name: Accept
+            in: header
+            required: false
+            schema:
+              type: string
+              example: application/json
+          - name: accessToken
+            in: header
+            required: true
+            schema:
+              type: string
+              example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+
+        responses:
+          '200':
+            summary: Retrieved a single tenant
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        isActive:
+                          type: string
+                        contactEmail:
+                          type: string
+                        contactPhone:
+                          type: string
+                        logo:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+                      pagination:
+                        $ref: '#components/pagination'
+
+                  message:
+                    type: string
+                    example: successfully retrieved tenant
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+
+
+      post:
+        summary: Update a single tenant
+        tags:
+        - Tenants
+        produces:
+        - application/json
+        security:
+          - ApiKey: [] 
+        parameters:
+          - in: path
+            name: tenantId
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The tenant ID
+          - name: Content-Type             
+            in: header
+            required: true
+            schema:
+              type: string
+              example: application/json
+          - name: Accept
+            in: header
+            required: false
+            schema:
+              type: string
+              example: application/json
+          - name: accessToken
+            in: header
+            required: true
+            schema:
+              type: string
+              example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+          - name: Body
+            in: body
+            required: true
+            description: Create a Tenant
+            schema:
+              $ref: '#/components/requestBody/TenantPOSTBody'
+          
+        responses:
+          '200':
+            description: OK
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        isActive:
+                          type: string
+                        contactEmail:
+                          type: string
+                        contactPhone:
+                          type: string
+                        logo:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+                    message:
+                      type: string
+                      example: successfully updated a tenant
+
+          '400':
+            description: Bad Request
+            schema:
+              $ref: '#/components/responses/400_Bad_Request'
+
+          '401':
+            description: Unauthorized
+            schema:
+              $ref: '#/components/responses/401_Unauthorized'
+
+          '404':
+            description: Not Found
+            schema:
+              $ref: '#/components/responses/404_Not_Found'
+
+          '409':
+            description: Conflict
+            schema:
+              $ref: '#/components/responses/409_Conflict'
+
+          '500':
+            description: Internal Server Error
+            schema:
+              $ref: '#/components/responses/500_Internal_Server_Error' 
+
+
+     
+components:
+  securitySchemes:
+    ApiKey:        # arbitrary name for the security scheme
+      type: apiKey
+      in: header 
+      name: accessToken
+
+  pagination:
+    type: object
+    properties:
+      totalPages:
+        type: integer
+        description: Total number of pages
+      limit:
+        type: integer
+        description: Number of items per page (pageBy)
+      currentPage:
+        type: integer
+
+  requestBody:
+
+    AuthenticatePOSTBody:
+      type: object
+      properties:
+        userIdentity:
+          type: string
+          description: This is referred to as either "email", "username" or anyother unique ID
+        password:
+          type: string
+          required:
+            - userIdentity
+            - password
+
+    ProductPOSTBody:
+      type: object
+      properties:
+        sku:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+          format: float
+        description:
+          type: string
+        imageURL:
+          type: string
+        weight:
+          type: number
+          format: float
+
+    OrderPOSTBody:
+      type: object
+      properties:
+        orderId:
+          type: string
+        totalQuantity:
+          type: number
+          format: float
+        paymentStatus:
+          type: string
+        countryCode:
+          type: string
+        currencyCode:
+          type: string
+        totalAmount:
+          type: number
+          format: float
+        shippingCost:
+          type: number
+          format: float
+        fulfillmentStatus:
+          type: string
+        orderRows:
+          type: array
+          items:
+            type: object
+            properties:
+              rowId:
+                type: string
+              productId:
+                type: string
+              productName:
+                type: string
+              productSku:
+                type: string
+              price:
+                type: number
+                format: float
+
+    TenantPOSTBody:
+      type: object
+      properties:
+        name:
+          type: string
+        contactEmail:
+          type: string
+        contactPhone:
+          type: string
+        administratorEmail:
+          type: string
+        administratorFirstName:
+          type: string
+        administratorLastName:
+          type: string
+        administratorPhone:
+          type: string
+        administratorPassword:
+          type: string
+        administratorUsername:
+          type: string
+
+    UserPOSTBody:
+      type: object
+      properties:
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phoneNumber:
+          type: string
+        irNo:
+          type: string
+        monthlyContributionAmount:
+          type: integer
+        savingsAmount:
+          type: integer
+        investmentAmount:
+          type: integer
+        stateOfOrigin:
+          type: string
+        maritalStatus:
+          type: string
+        gender:
+          type: string
+        deploymentAddress:
+          type: string
+        residentAddress:
+          type: string
+        permanentAddress:
+          type: string
+        officeAddress:
+          type: string
+        birthday:
+          type: string
+        salaryGrade:
+          type: string
+        employmentDate:
+          type: string
+        representative:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            relationship:
+              type: string
+            address:
+              type: string
+            phoneNumber:
+              type: string
+        bank:
+          type: object
+          properties:
+            bankName:
+              type: string
+            accountName:
+              type: string
+            accountNumber:
+              type: string
+        
+  responses:
+    Authenticate:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            userName:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
+            createdAt:
+              type: string
+            userCategoryType:
+              type: string
+        message:
+          type: string
+          example: successfully authenticated
+    
+    400_Bad_Request:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+        data:
+          type: object
+        message:
+          type: string
+    
+    401_Unauthorized:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+        data:
+          type: object
+        message:
+          type: string
+
+    403_Forbidden:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+        data:
+          type: object
+        message:
+          type: string
+
+    404_Not_Found:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+        data:
+          type: object
+        message:
+          type: string
+
+    409_Conflict:      
+      type: object
+      properties:
+        type: integer
+        data:
+          type: object
+        message:
+          type: string
+
+    500_Internal_Server_Error:
+      type: object
+      properties:
+        type: integer
+        data:
+          type: object
+        message:
+          type: string
+
+
+security:
+    - ApiKey: []
+
+    
+tags:
+  - name: Authentication
+  - name: Users
+  - name: Members
+  - name: Tenants
+  - name: Account
+
+
+
+# 'users/contribution/<int:userId>/'
+
+# 'users/delete/'
+# 'users/pinreset/'
+# 'users/<int:userId>/image/'
+# 'users/pinchange/'
+# 'upload/'
+# 'account/savings/'
+# 'account/investment/'
+# 'account/target/'
+# 'account/savingsinvestment/transactions/'
+# 'account/investment/transactions/'
+# 'account/target/transactions/'
+# 'account/target/transactions/<int:targetId>/'
+# 'account/requests/'
+# 'account/requests/add/'
+# 'account/requests/withdraw/'
+# 'account/requests/<int:referenceId>/'
+# 'account/disputes/'
+# 'account/disputes/<int:disputeId>/'
+
+# /resettoken/:
+#   post:
+#     summary: Token Reset
+#     tags:
+#     - Users
+#     produces:
+#     - application/json
+#     security:
+#       - ApiKey: [] 
+#     parameters:
+#     - name: Content-Type             
+#       in: header
+#       required: true
+#       schema:
+#         type: string
+#         example: application/json
+#     - name: Accept
+#       in: header
+#       required: false
+#       schema:
+#         type: string
+#         example: application/json
+#     - name: Body
+#     in: body
+#     required: true
+#     description: Password Reset Token
+#     schema:
+#       type: object
+#       properties:
+#         email:
+#           type: string
+
+#     responses:
+#       '200':
+#         description: OK
+#         schema:
+#           type: object
+#           properties:
+#             data:
+#               type: object
+#               properties:
+#                 data:
+#                   type: object
+#                 message:
+#                   type: string
+#                   example: An email was sent to your account if you have an account with us
+
+#       '400':
+#         description: Bad Request
+#         schema:
+#           $ref: '#/components/responses/400_Bad_Request'
+      
+#       '404':
+#         description: Not Found
+#         schema:
+#           $ref: '#/components/responses/404_Not_Found'
+
+#       '500':
+#         description: Internal Server Error
+#         schema:
+#           $ref: '#/components/responses/500_Internal_Server_Error'
+
+
+
+# /verifytoken/:
+#   post:
+#     summary: Verify User Access Token
+#     tags:
+#     - Authentication
+#     produces:
+#     - application/json
+#     security:
+#       - ApiKey: [] 
+#     parameters:
+#     - name: Content-Type             
+#       in: header
+#       required: true
+#       schema:
+#         type: string
+#         example: application/json
+#     - name: Accept
+#       in: header
+#       required: false
+#       schema:
+#         type: string
+#         example: application/json
+#     - name: accessToken
+#       in: header
+#       required: true
+#       schema:
+#         type: string
+#         example: xWBqLeTk_rzxBQ8mOC9L5ool4gdaaHu_5gSm2t3--38
+
+    # responses:
+    #   '200':
+    #     description: OK
+    #     schema:
+    #       type: object
+    #       properties:
+    #           data:
+    #             type: object
+    #             properties:
+    #               message:
+    #                 type: string
+    #                 example: token is valid
+
+    #   '401':
+    #     description: Unauthorized
+    #     schema:
+    #       $ref: '#/components/responses/401_Unauthorized'
